@@ -17,10 +17,11 @@ public class GameState
     public IReadOnlyList<Position> SnakeBody => _snake.Segments;
     public Position BerryPosition => _berry.Position;
 
-    public GameState(int boardWidth, int boardHeight)
+    public GameState(int initialScore, int boardWidth, int boardHeight)
     {
         BoardWidth = boardWidth;
         BoardHeight = boardHeight;
+        Score = initialScore;
 
         var center = new Position(boardWidth / 2, boardHeight / 2);
         _snake = new Snake(center, GameConfig.InitialSnakeLength);

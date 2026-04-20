@@ -1,178 +1,31 @@
 ﻿///█ ■
 ////https://www.youtube.com/watch?v=SGZgvMwjq2U
 
-using Snake.Enums;
 using Snake.Game;
+using Snake.Input;
+using Snake.Rendering;
 
-namespace Snake
+namespace Snake;
+
+internal class Program
 {
-    class Program
+    private static void Main(string[] args)
     {
-        static void Main(string[] args)
+        IGameRenderer renderer = new ConsoleGameRenderer();
+        IInputReader inputReader = new ConsoleInputReader();
+        var gameState = new GameState(GameConfig.InitialSnakeLength, GameConfig.BoardWidth, GameConfig.BoardHeight);
+
+        var direction = GameConfig.InitialSnakeDirection;
+
+        renderer.Initialize(GameConfig.BoardWidth, GameConfig.BoardHeight);
+
+        while (!gameState.IsGameOver)
         {
-            Console.WindowHeight = 16;
-            Console.WindowWidth = 32;
-
-            var screenWidth = GameConfig.BoardWidth;
-            var screenHeight = GameConfig.BoardHeight;
-
-            var randomNumber = new Random();
-            var score = GameConfig.InitialSnakeLength;
-            var isGameOver = false;
-
-            var head = new Pixel(new Position(screenWidth / 2, screenHeight / 2), ConsoleColor.Red);
-            
-            var movementDirection = Direction.Right;
-            List<Position> bodyPositions = [];
-
-            var berryX = randomNumber.Next(1, screenWidth - 1);
-            var berryY = randomNumber.Next(1, screenHeight - 1);
-
-            while (true)
-            {
-                Console.Clear();
-
-                isGameOver = DidCollide(head, screenWidth, screenHeight);
-                
-                DrawWalls(screenWidth, screenHeight);
-
-                Console.ForegroundColor = ConsoleColor.Green;
-
-                if (berryX == head.X && berryY == head.Y)
-                {
-                    score++;
-                    berryX = randomNumber.Next(1, screenWidth - 2);
-                    berryY = randomNumber.Next(1, screenHeight - 2);
-                }
-
-                bodyPositions.ForEach(position =>
-                {
-                    Console.SetCursorPosition(position.X, position.Y);
-                    Console.Write("■");
-                    if (position.X == head.X && position.Y == head.Y)
-                    {
-                        isGameOver = true;
-                    }
-                });
-
-                if (isGameOver)
-                {
-                    break;
-                }
-
-                Console.SetCursorPosition(head.X, head.Y);
-                Console.ForegroundColor = head.Color;
-                Console.Write("■");
-                Console.SetCursorPosition(berryX, berryY);
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.Write("■");
-
-                var tickStartTime = DateTime.Now;
-                var hasMovedThisTick = false;
-
-                while (true)
-                {
-                    var currentTime = DateTime.Now;
-                    if (currentTime.Subtract(tickStartTime).TotalMilliseconds > GameConfig.TickDurationMs) { break; }
-
-                    if (Console.KeyAvailable)
-                    {
-                        ConsoleKeyInfo keyPressed = Console.ReadKey(true);
-                        //Console.WriteLine(keyPressed.Key.ToString());
-                        movementDirection = HandleInput(keyPressed, movementDirection, ref hasMovedThisTick);
-                    }
-                }
-                
-                bodyPositions.Add(new Position(head.X, head.Y));
-                
-                UpdateHeadPosition(movementDirection, head);
-
-                if (bodyPositions.Count > score)
-                {
-                    bodyPositions.RemoveAt(0);
-                }
-            }
-            Console.SetCursorPosition(screenWidth / 5, screenHeight / 2);
-            Console.WriteLine("Game over, Score: " + score);
-            Console.SetCursorPosition(screenWidth / 5, screenHeight / 2 + 1);
+            renderer.Render(gameState);
+            direction = inputReader.ReadDirectionDuringTick(direction, TimeSpan.FromMilliseconds(GameConfig.TickDurationMs));
+            gameState.Tick(direction);
         }
 
-        private static void UpdateHeadPosition(Direction movementDirection, Pixel head)
-        {
-            switch (movementDirection)
-            {
-                case Direction.Up:
-                    head.Y--;
-                    break;
-                case Direction.Down:
-                    head.Y++;
-                    break;
-                case Direction.Left:
-                    head.X--;
-                    break;
-                case Direction.Right:
-                    head.X++;
-                    break;
-            }
-        }
-
-        private static Direction HandleInput(ConsoleKeyInfo keyPressed, Direction movementDirection, ref bool hasMovedThisTick)
-        {
-            if (keyPressed.Key.Equals(ConsoleKey.UpArrow) && movementDirection != Direction.Down && !hasMovedThisTick)
-            {
-                movementDirection = Direction.Up;
-                hasMovedThisTick = true;
-            }
-            if (keyPressed.Key.Equals(ConsoleKey.DownArrow) && movementDirection != Direction.Up && !hasMovedThisTick)
-            {
-                movementDirection = Direction.Down;
-                hasMovedThisTick = true;
-            }
-            if (keyPressed.Key.Equals(ConsoleKey.LeftArrow) && movementDirection != Direction.Right && !hasMovedThisTick)
-            {
-                movementDirection = Direction.Left;
-                hasMovedThisTick = true;
-            }
-            if (keyPressed.Key.Equals(ConsoleKey.RightArrow) && movementDirection != Direction.Left && !hasMovedThisTick)
-            {
-                movementDirection = Direction.Right;
-                hasMovedThisTick = true;
-            }
-
-            return movementDirection;
-        }
-
-        private static void DrawWalls(int screenWidth, int screenHeight)
-        {
-            for (var i = 0; i < screenWidth; i++)
-            {
-                Console.SetCursorPosition(i, 0);
-                Console.Write("■");
-            }
-                
-            for (var i = 0; i < screenWidth; i++)
-            {
-                Console.SetCursorPosition(i, screenHeight - 1);
-                Console.Write("■");
-            }
-                
-            for (var i = 0; i < screenHeight; i++)
-            {
-                Console.SetCursorPosition(0, i);
-                Console.Write("■");
-            }
-                
-            for (var i = 0; i < screenHeight; i++)
-            {
-                Console.SetCursorPosition(screenWidth - 1, i);
-                Console.Write("■");
-            }
-        }
-
-        private static bool DidCollide(Pixel head, int screenWidth, int screenHeight)
-        {
-            return head.X == screenWidth - 1 || head.X == 0 || head.Y == screenHeight - 1 || head.Y == 0;
-        }
+        renderer.DrawGameOver(gameState);
     }
 }
-//¦
