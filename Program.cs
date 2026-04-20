@@ -19,11 +19,10 @@ namespace Snake
             var score = 5;
             var isGameOver = false;
 
-            var head = new Pixel(screenWidth / 2, screenHeight / 2, ConsoleColor.Red);
+            var head = new Pixel(new Position(screenWidth / 2, screenHeight / 2), ConsoleColor.Red);
             
             var movementDirection = Direction.Right;
-            var bodyXPositions = new List<int>();
-            var bodyYPositions = new List<int>();
+            List<Position> bodyPositions = [];
 
             var berryX = randomNumber.Next(1, screenWidth - 1);
             var berryY = randomNumber.Next(1, screenHeight - 1);
@@ -70,15 +69,15 @@ namespace Snake
                     berryY = randomNumber.Next(1, screenHeight - 2);
                 }
 
-                for (var i = 0; i < bodyXPositions.Count; i++)
+                bodyPositions.ForEach(position =>
                 {
-                    Console.SetCursorPosition(bodyXPositions[i], bodyYPositions[i]);
+                    Console.SetCursorPosition(position.X, position.Y);
                     Console.Write("■");
-                    if (bodyXPositions[i] == head.X && bodyYPositions[i] == head.Y)
+                    if (position.X == head.X && position.Y == head.Y)
                     {
                         isGameOver = true;
                     }
-                }
+                });
 
                 if (isGameOver)
                 {
@@ -127,8 +126,7 @@ namespace Snake
                     }
                 }
                 
-                bodyXPositions.Add(head.X);
-                bodyYPositions.Add(head.Y);
+                bodyPositions.Add(new Position(head.X, head.Y));
                 
                 switch (movementDirection)
                 {
@@ -146,10 +144,9 @@ namespace Snake
                         break;
                 }
 
-                if (bodyXPositions.Count > score)
+                if (bodyPositions.Count > score)
                 {
-                    bodyXPositions.RemoveAt(0);
-                    bodyYPositions.RemoveAt(0);
+                    bodyPositions.RemoveAt(0);
                 }
             }
             Console.SetCursorPosition(screenWidth / 5, screenHeight / 2);
