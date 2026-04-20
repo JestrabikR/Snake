@@ -28,8 +28,8 @@ namespace Snake
             var bodyXPositions = new List<int>();
             var bodyYPositions = new List<int>();
 
-            var berryX = randomNumber.Next(0, screenWidth);
-            var berryY = randomNumber.Next(0, screenHeight);
+            var berryX = randomNumber.Next(1, screenWidth - 1);
+            var berryY = randomNumber.Next(1, screenHeight - 1);
 
             while (true)
             {
