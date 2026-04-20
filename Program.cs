@@ -19,10 +19,7 @@ namespace Snake
             var score = 5;
             var isGameOver = false;
 
-            var head = new Pixel();
-            head.XPos = screenWidth / 2;
-            head.YPos = screenHeight / 2;
-            head.Color = ConsoleColor.Red;
+            var head = new Pixel(screenWidth / 2, screenHeight / 2, ConsoleColor.Red);
             
             var movementDirection = Direction.Right;
             var bodyXPositions = new List<int>();
@@ -35,7 +32,7 @@ namespace Snake
             {
                 Console.Clear();
                 
-                if (head.XPos == screenWidth - 1 || head.XPos == 0 || head.YPos == screenHeight - 1 || head.YPos == 0)
+                if (head.X == screenWidth - 1 || head.X == 0 || head.Y == screenHeight - 1 || head.Y == 0)
                 {
                     isGameOver = true;
                 }
@@ -66,7 +63,7 @@ namespace Snake
                 
                 Console.ForegroundColor = ConsoleColor.Green;
 
-                if (berryX == head.XPos && berryY == head.YPos)
+                if (berryX == head.X && berryY == head.Y)
                 {
                     score++;
                     berryX = randomNumber.Next(1, screenWidth - 2);
@@ -77,7 +74,7 @@ namespace Snake
                 {
                     Console.SetCursorPosition(bodyXPositions[i], bodyYPositions[i]);
                     Console.Write("■");
-                    if (bodyXPositions[i] == head.XPos && bodyYPositions[i] == head.YPos)
+                    if (bodyXPositions[i] == head.X && bodyYPositions[i] == head.Y)
                     {
                         isGameOver = true;
                     }
@@ -88,7 +85,7 @@ namespace Snake
                     break;
                 }
 
-                Console.SetCursorPosition(head.XPos, head.YPos);
+                Console.SetCursorPosition(head.X, head.Y);
                 Console.ForegroundColor = head.Color;
                 Console.Write("■");
                 Console.SetCursorPosition(berryX, berryY);
@@ -130,22 +127,22 @@ namespace Snake
                     }
                 }
                 
-                bodyXPositions.Add(head.XPos);
-                bodyYPositions.Add(head.YPos);
+                bodyXPositions.Add(head.X);
+                bodyYPositions.Add(head.Y);
                 
                 switch (movementDirection)
                 {
                     case Direction.Up:
-                        head.YPos--;
+                        head.Y--;
                         break;
                     case Direction.Down:
-                        head.YPos++;
+                        head.Y++;
                         break;
                     case Direction.Left:
-                        head.XPos--;
+                        head.X--;
                         break;
                     case Direction.Right:
-                        head.XPos++;
+                        head.X++;
                         break;
                 }
 
@@ -158,13 +155,6 @@ namespace Snake
             Console.SetCursorPosition(screenWidth / 5, screenHeight / 2);
             Console.WriteLine("Game over, Score: " + score);
             Console.SetCursorPosition(screenWidth / 5, screenHeight / 2 + 1);
-        }
-
-        class Pixel
-        {
-            public int XPos { get; set; }
-            public int YPos { get; set; }
-            public ConsoleColor Color { get; set; }
         }
     }
 }
