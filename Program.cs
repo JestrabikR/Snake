@@ -30,36 +30,11 @@ namespace Snake
             while (true)
             {
                 Console.Clear();
+
+                isGameOver = DidCollide(head, screenWidth, screenHeight);
                 
-                if (head.X == screenWidth - 1 || head.X == 0 || head.Y == screenHeight - 1 || head.Y == 0)
-                {
-                    isGameOver = true;
-                }
-                
-                for (var i = 0; i < screenWidth; i++)
-                {
-                    Console.SetCursorPosition(i, 0);
-                    Console.Write("■");
-                }
-                
-                for (var i = 0; i < screenWidth; i++)
-                {
-                    Console.SetCursorPosition(i, screenHeight - 1);
-                    Console.Write("■");
-                }
-                
-                for (var i = 0; i < screenHeight; i++)
-                {
-                    Console.SetCursorPosition(0, i);
-                    Console.Write("■");
-                }
-                
-                for (var i = 0; i < screenHeight; i++)
-                {
-                    Console.SetCursorPosition(screenWidth - 1, i);
-                    Console.Write("■");
-                }
-                
+                DrawWalls(screenWidth, screenHeight);
+
                 Console.ForegroundColor = ConsoleColor.Green;
 
                 if (berryX == head.X && berryY == head.Y)
@@ -103,46 +78,13 @@ namespace Snake
                     {
                         ConsoleKeyInfo keyPressed = Console.ReadKey(true);
                         //Console.WriteLine(keyPressed.Key.ToString());
-                        if (keyPressed.Key.Equals(ConsoleKey.UpArrow) && movementDirection != Direction.Down && !hasMovedThisTick)
-                        {
-                            movementDirection = Direction.Up;
-                            hasMovedThisTick = true;
-                        }
-                        if (keyPressed.Key.Equals(ConsoleKey.DownArrow) && movementDirection != Direction.Up && !hasMovedThisTick)
-                        {
-                            movementDirection = Direction.Down;
-                            hasMovedThisTick = true;
-                        }
-                        if (keyPressed.Key.Equals(ConsoleKey.LeftArrow) && movementDirection != Direction.Right && !hasMovedThisTick)
-                        {
-                            movementDirection = Direction.Left;
-                            hasMovedThisTick = true;
-                        }
-                        if (keyPressed.Key.Equals(ConsoleKey.RightArrow) && movementDirection != Direction.Left && !hasMovedThisTick)
-                        {
-                            movementDirection = Direction.Right;
-                            hasMovedThisTick = true;
-                        }
+                        movementDirection = HandleInput(keyPressed, movementDirection, ref hasMovedThisTick);
                     }
                 }
                 
                 bodyPositions.Add(new Position(head.X, head.Y));
                 
-                switch (movementDirection)
-                {
-                    case Direction.Up:
-                        head.Y--;
-                        break;
-                    case Direction.Down:
-                        head.Y++;
-                        break;
-                    case Direction.Left:
-                        head.X--;
-                        break;
-                    case Direction.Right:
-                        head.X++;
-                        break;
-                }
+                UpdateHeadPosition(movementDirection, head);
 
                 if (bodyPositions.Count > score)
                 {
@@ -152,6 +94,83 @@ namespace Snake
             Console.SetCursorPosition(screenWidth / 5, screenHeight / 2);
             Console.WriteLine("Game over, Score: " + score);
             Console.SetCursorPosition(screenWidth / 5, screenHeight / 2 + 1);
+        }
+
+        private static void UpdateHeadPosition(Direction movementDirection, Pixel head)
+        {
+            switch (movementDirection)
+            {
+                case Direction.Up:
+                    head.Y--;
+                    break;
+                case Direction.Down:
+                    head.Y++;
+                    break;
+                case Direction.Left:
+                    head.X--;
+                    break;
+                case Direction.Right:
+                    head.X++;
+                    break;
+            }
+        }
+
+        private static Direction HandleInput(ConsoleKeyInfo keyPressed, Direction movementDirection, ref bool hasMovedThisTick)
+        {
+            if (keyPressed.Key.Equals(ConsoleKey.UpArrow) && movementDirection != Direction.Down && !hasMovedThisTick)
+            {
+                movementDirection = Direction.Up;
+                hasMovedThisTick = true;
+            }
+            if (keyPressed.Key.Equals(ConsoleKey.DownArrow) && movementDirection != Direction.Up && !hasMovedThisTick)
+            {
+                movementDirection = Direction.Down;
+                hasMovedThisTick = true;
+            }
+            if (keyPressed.Key.Equals(ConsoleKey.LeftArrow) && movementDirection != Direction.Right && !hasMovedThisTick)
+            {
+                movementDirection = Direction.Left;
+                hasMovedThisTick = true;
+            }
+            if (keyPressed.Key.Equals(ConsoleKey.RightArrow) && movementDirection != Direction.Left && !hasMovedThisTick)
+            {
+                movementDirection = Direction.Right;
+                hasMovedThisTick = true;
+            }
+
+            return movementDirection;
+        }
+
+        private static void DrawWalls(int screenWidth, int screenHeight)
+        {
+            for (var i = 0; i < screenWidth; i++)
+            {
+                Console.SetCursorPosition(i, 0);
+                Console.Write("■");
+            }
+                
+            for (var i = 0; i < screenWidth; i++)
+            {
+                Console.SetCursorPosition(i, screenHeight - 1);
+                Console.Write("■");
+            }
+                
+            for (var i = 0; i < screenHeight; i++)
+            {
+                Console.SetCursorPosition(0, i);
+                Console.Write("■");
+            }
+                
+            for (var i = 0; i < screenHeight; i++)
+            {
+                Console.SetCursorPosition(screenWidth - 1, i);
+                Console.Write("■");
+            }
+        }
+
+        private static bool DidCollide(Pixel head, int screenWidth, int screenHeight)
+        {
+            return head.X == screenWidth - 1 || head.X == 0 || head.Y == screenHeight - 1 || head.Y == 0;
         }
     }
 }
