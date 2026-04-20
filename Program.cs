@@ -5,27 +5,19 @@ using Snake.Game;
 using Snake.Input;
 using Snake.Rendering;
 
-namespace Snake;
+IGameRenderer renderer = new ConsoleGameRenderer();
+IInputReader inputReader = new ConsoleInputReader();
+var gameState = new GameState(GameConfig.InitialSnakeLength, GameConfig.BoardWidth, GameConfig.BoardHeight);
 
-internal class Program
+var direction = GameConfig.InitialSnakeDirection;
+
+renderer.Initialize(GameConfig.BoardWidth, GameConfig.BoardHeight);
+
+while (!gameState.IsGameOver)
 {
-    private static void Main(string[] args)
-    {
-        IGameRenderer renderer = new ConsoleGameRenderer();
-        IInputReader inputReader = new ConsoleInputReader();
-        var gameState = new GameState(GameConfig.InitialSnakeLength, GameConfig.BoardWidth, GameConfig.BoardHeight);
-
-        var direction = GameConfig.InitialSnakeDirection;
-
-        renderer.Initialize(GameConfig.BoardWidth, GameConfig.BoardHeight);
-
-        while (!gameState.IsGameOver)
-        {
-            renderer.Render(gameState);
-            direction = inputReader.ReadDirectionDuringTick(direction, TimeSpan.FromMilliseconds(GameConfig.TickDurationMs));
-            gameState.Tick(direction);
-        }
-
-        renderer.DrawGameOver(gameState);
-    }
+    renderer.Render(gameState);
+    direction = inputReader.ReadDirectionDuringTick(direction, TimeSpan.FromMilliseconds(GameConfig.TickDurationMs));
+    gameState.Tick(direction);
 }
+
+renderer.DrawGameOver(gameState);
