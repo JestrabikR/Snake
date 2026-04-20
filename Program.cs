@@ -1,5 +1,8 @@
 ﻿///█ ■
 ////https://www.youtube.com/watch?v=SGZgvMwjq2U
+
+using Snake.Enums;
+
 namespace Snake
 {
     class Program
@@ -21,7 +24,7 @@ namespace Snake
             head.YPos = screenHeight / 2;
             head.Color = ConsoleColor.Red;
             
-            var movement = "RIGHT";
+            var movementDirection = Direction.Right;
             var bodyXPositions = new List<int>();
             var bodyYPositions = new List<int>();
 
@@ -104,24 +107,24 @@ namespace Snake
                     {
                         ConsoleKeyInfo keyPressed = Console.ReadKey(true);
                         //Console.WriteLine(keyPressed.Key.ToString());
-                        if (keyPressed.Key.Equals(ConsoleKey.UpArrow) && movement != "DOWN" && !hasMovedThisTick)
+                        if (keyPressed.Key.Equals(ConsoleKey.UpArrow) && movementDirection != Direction.Down && !hasMovedThisTick)
                         {
-                            movement = "UP";
+                            movementDirection = Direction.Up;
                             hasMovedThisTick = true;
                         }
-                        if (keyPressed.Key.Equals(ConsoleKey.DownArrow) && movement != "UP" && !hasMovedThisTick)
+                        if (keyPressed.Key.Equals(ConsoleKey.DownArrow) && movementDirection != Direction.Up && !hasMovedThisTick)
                         {
-                            movement = "DOWN";
+                            movementDirection = Direction.Down;
                             hasMovedThisTick = true;
                         }
-                        if (keyPressed.Key.Equals(ConsoleKey.LeftArrow) && movement != "RIGHT" && !hasMovedThisTick)
+                        if (keyPressed.Key.Equals(ConsoleKey.LeftArrow) && movementDirection != Direction.Right && !hasMovedThisTick)
                         {
-                            movement = "LEFT";
+                            movementDirection = Direction.Left;
                             hasMovedThisTick = true;
                         }
-                        if (keyPressed.Key.Equals(ConsoleKey.RightArrow) && movement != "LEFT" && !hasMovedThisTick)
+                        if (keyPressed.Key.Equals(ConsoleKey.RightArrow) && movementDirection != Direction.Left && !hasMovedThisTick)
                         {
-                            movement = "RIGHT";
+                            movementDirection = Direction.Right;
                             hasMovedThisTick = true;
                         }
                     }
@@ -130,18 +133,18 @@ namespace Snake
                 bodyXPositions.Add(head.XPos);
                 bodyYPositions.Add(head.YPos);
                 
-                switch (movement)
+                switch (movementDirection)
                 {
-                    case "UP":
+                    case Direction.Up:
                         head.YPos--;
                         break;
-                    case "DOWN":
+                    case Direction.Down:
                         head.YPos++;
                         break;
-                    case "LEFT":
+                    case Direction.Left:
                         head.XPos--;
                         break;
-                    case "RIGHT":
+                    case Direction.Right:
                         head.XPos++;
                         break;
                 }
