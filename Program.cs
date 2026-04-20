@@ -14,7 +14,7 @@ namespace Snake
 
             var randomNumber = new Random();
             var score = 5;
-            var gameover = 0;
+            var isGameOver = false;
 
             var head = new Pixel();
             head.XPos = screenWidth / 2;
@@ -34,7 +34,7 @@ namespace Snake
                 
                 if (head.XPos == screenWidth - 1 || head.XPos == 0 || head.YPos == screenHeight - 1 || head.YPos == 0)
                 {
-                    gameover = 1;
+                    isGameOver = true;
                 }
                 
                 for (var i = 0; i < screenWidth; i++)
@@ -76,11 +76,11 @@ namespace Snake
                     Console.Write("■");
                     if (bodyXPositions[i] == head.XPos && bodyYPositions[i] == head.YPos)
                     {
-                        gameover = 1;
+                        isGameOver = true;
                     }
                 }
 
-                if (gameover == 1)
+                if (isGameOver)
                 {
                     break;
                 }
@@ -92,36 +92,37 @@ namespace Snake
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write("■");
 
-                var time = DateTime.Now;
-                var buttonPressed = "no";
+                var tickStartTime = DateTime.Now;
+                var hasMovedThisTick = false;
 
                 while (true)
                 {
-                    var time2 = DateTime.Now;
-                    if (time2.Subtract(time).TotalMilliseconds > 500) { break; }
+                    var currentTime = DateTime.Now;
+                    if (currentTime.Subtract(tickStartTime).TotalMilliseconds > 500) { break; }
+
                     if (Console.KeyAvailable)
                     {
                         ConsoleKeyInfo keyPressed = Console.ReadKey(true);
                         //Console.WriteLine(keyPressed.Key.ToString());
-                        if (keyPressed.Key.Equals(ConsoleKey.UpArrow) && movement != "DOWN" && buttonPressed == "no")
+                        if (keyPressed.Key.Equals(ConsoleKey.UpArrow) && movement != "DOWN" && !hasMovedThisTick)
                         {
                             movement = "UP";
-                            buttonPressed = "yes";
+                            hasMovedThisTick = true;
                         }
-                        if (keyPressed.Key.Equals(ConsoleKey.DownArrow) && movement != "UP" && buttonPressed == "no")
+                        if (keyPressed.Key.Equals(ConsoleKey.DownArrow) && movement != "UP" && !hasMovedThisTick)
                         {
                             movement = "DOWN";
-                            buttonPressed = "yes";
+                            hasMovedThisTick = true;
                         }
-                        if (keyPressed.Key.Equals(ConsoleKey.LeftArrow) && movement != "RIGHT" && buttonPressed == "no")
+                        if (keyPressed.Key.Equals(ConsoleKey.LeftArrow) && movement != "RIGHT" && !hasMovedThisTick)
                         {
                             movement = "LEFT";
-                            buttonPressed = "yes";
+                            hasMovedThisTick = true;
                         }
-                        if (keyPressed.Key.Equals(ConsoleKey.RightArrow) && movement != "LEFT" && buttonPressed == "no")
+                        if (keyPressed.Key.Equals(ConsoleKey.RightArrow) && movement != "LEFT" && !hasMovedThisTick)
                         {
                             movement = "RIGHT";
-                            buttonPressed = "yes";
+                            hasMovedThisTick = true;
                         }
                     }
                 }
