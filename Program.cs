@@ -2,6 +2,7 @@
 ////https://www.youtube.com/watch?v=SGZgvMwjq2U
 
 using Snake.Enums;
+using Snake.Game;
 
 namespace Snake
 {
@@ -12,11 +13,11 @@ namespace Snake
             Console.WindowHeight = 16;
             Console.WindowWidth = 32;
 
-            var screenWidth = Console.WindowWidth;
-            var screenHeight = Console.WindowHeight;
+            var screenWidth = GameConfig.BoardWidth;
+            var screenHeight = GameConfig.BoardHeight;
 
             var randomNumber = new Random();
-            var score = 5;
+            var score = GameConfig.InitialSnakeLength;
             var isGameOver = false;
 
             var head = new Pixel(new Position(screenWidth / 2, screenHeight / 2), ConsoleColor.Red);
@@ -72,7 +73,7 @@ namespace Snake
                 while (true)
                 {
                     var currentTime = DateTime.Now;
-                    if (currentTime.Subtract(tickStartTime).TotalMilliseconds > 500) { break; }
+                    if (currentTime.Subtract(tickStartTime).TotalMilliseconds > GameConfig.TickDurationMs) { break; }
 
                     if (Console.KeyAvailable)
                     {
